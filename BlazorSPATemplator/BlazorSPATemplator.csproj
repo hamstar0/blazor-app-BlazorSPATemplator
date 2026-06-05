@@ -8,6 +8,9 @@
 
   <ItemGroup>
     <PackageReference Include="Markdig" Version="1.2.0" />
+    <Content Include="Content\Markdown\**\*.md">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
 </Project>

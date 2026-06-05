@@ -7,6 +7,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorComponents();
+builder.Services.AddSingleton<MarkdownFileSource>();
 builder.Services.AddSingleton<MarkdownMarkupSupplier>();
 
 var app = builder.Build();

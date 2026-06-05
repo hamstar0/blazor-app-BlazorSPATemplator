@@ -1,4 +1,3 @@
-using BlazorSPATemplator.Data;
 using Markdig;
 using Microsoft.AspNetCore.Components;
 
@@ -16,43 +15,35 @@ public class MarkdownMarkupSupplier {
 
 
 
-    private IEnumerable<Entry> ProcessedContentEntries = null!;
+    private IEnumerable<Entry> _ProcessedContentEntries = null!;
 
 
 
-    public MarkdownMarkupSupplier() {
-        // Define the path to your server-side markdown file
-        // string filePath = Path.Combine( this.Env.WebRootPath, this.MarkdownFile );   //ex. "content.md"
-        //
-        // if( File.Exists(filePath) ) {
-        //    string markdownContent = await File.ReadAllTextAsync( filePath );
-        //    ...
-        // }
-        // else {
-        //     this.RenderedHtml = (MarkupString)"<p style='color:red;'>Error: Markdown file not found.</p>";
-        // }
+    public MarkdownMarkupSupplier( MarkdownFileSource fileSource ) {
+        IEnumerable<MarkdownFileSource.Entry> fileData = fileSource.GetFileData();
 
-        this.ProcessedContentEntries = this.ProcessContentEntries();
+        this._ProcessedContentEntries = this.ProcessContentEntries( fileData );
     }
 
-    private IEnumerable<Entry> ProcessContentEntries() {
+    private IEnumerable<Entry> ProcessContentEntries( IEnumerable<MarkdownFileSource.Entry> markdownEntries ) {
         // Configure Markdig pipeline for advanced features like tables, auto-links, etc.
         MarkdownPipeline pipeline = new MarkdownPipelineBuilder()
             .UseAdvancedExtensions()
             .Build();
 
-        foreach( MarkdownContentSource.Entry entry in MarkdownContentSource.Entries ) {
+        foreach( MarkdownFileSource.Entry entry in markdownEntries ) {
             // Convert raw markdown text to raw HTML text
-            string htmlContent = Markdown.ToHtml( entry.Content, pipeline );
+            string titleHtml = Markdown.ToHtml( entry.Title, pipeline );
+            string contentHtml = Markdown.ToHtml( entry.Content, pipeline );
 
             // Cast the string to MarkupString so Blazor parses the HTML elements
-            yield return new Entry( entry.Id, (MarkupString)entry.Title, (MarkupString)htmlContent );
+            yield return new Entry( entry.Id, (MarkupString)titleHtml, (MarkupString)contentHtml );
         }
     }
 
 
     public IEnumerable<Entry> GetContentEntries() {
-        return this.ProcessedContentEntries.ToArray();
+        return this._ProcessedContentEntries.ToArray();
     }
 }
 
