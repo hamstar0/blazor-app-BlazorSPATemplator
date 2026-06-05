@@ -1,0 +1,14 @@
+@using BlazorSPATemplator.Services;
+
+
+
+<nav class="nav flex-column">
+    @foreach( MarkdownMarkupSupplier.Entry entry in this.Loader.GetContentEntries() ) {
+        <div class="nav-item px-3">
+            <a class="nav-link" href=@($"#{entry.Id}")>
+                @entry.Title
+            </a>
+        </div>
+    }
+</nav>
+

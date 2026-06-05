@@ -1,0 +1,15 @@
+﻿@using BlazorSPATemplator.Components.Application;
+
+
+<div class="top-row ps-3 navbar navbar-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="#home">Wiki SPA</a>
+    </div>
+</div>
+
+<input type="checkbox" title="Navigation menu" class="navbar-toggler" />
+
+<div class="nav-scrollable" onclick="document.querySelector('.navbar-toggler').click()">
+    <MarkdownMultiNavMenuRender />
+</div>
+

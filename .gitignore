@@ -1,0 +1,35 @@
+# Build folders
+bin/
+obj/
+
+# User-specific files
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Visual Studio temporary files
+.vs/
+
+# Rider files
+.idea/
+
+# ASP.NET Core / Blazor
+*.db
+*.sqlite
+*.pdb
+*.cache
+
+# Node/npm related
+node_modules/
+
+# Static web assets and publish output
+publish/
+wwwroot/dist/
+
+# Log files
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db

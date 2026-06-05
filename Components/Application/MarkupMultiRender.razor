@@ -1,0 +1,15 @@
+@using BlazorSPATemplator.Services;
+
+
+
+<div class="px-4">
+    <div class="content-sections">
+        @foreach( MarkdownMarkupSupplier.Entry entry in this.Loader.GetContentEntries() ) {
+            <section id=@entry.Id >
+                <h2>@entry.Title</h2>
+                <div class="content-body">@entry.Content</div>
+            </section>
+        }
+    </div>
+</div>
+
