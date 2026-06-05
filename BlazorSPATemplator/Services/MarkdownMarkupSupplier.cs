@@ -25,8 +25,8 @@ public class MarkdownMarkupSupplier {
         IEnumerable<string> fileData = fileSource.GetFileData();
 
         this._ProcessedContentEntries = this.ProcessContentEntries( fileData )
-            .OrderBy( e => e.SortWeight )
-            .OrderBy( e => e.Title.ToString() );
+            .OrderBy( e => e.Title.ToString() )
+            .OrderByDescending( e => e.SortWeight );
     }
 
     private IEnumerable<Entry> ProcessContentEntries( IEnumerable<string> markdownEntries ) {
@@ -41,7 +41,7 @@ public class MarkdownMarkupSupplier {
             // Line 1: Hash id (sans hash)
             string id = lines[0].Trim();
             // Line 2: Sort weight
-            long weight = int.Parse( lines[1].Trim() );
+            long weight = long.Parse( lines[1].Trim() );
             // Line 3: Title
             string titleRaw = lines[2];
             // Lines: Content
@@ -52,7 +52,12 @@ public class MarkdownMarkupSupplier {
             string contentHtml = Markdown.ToHtml( contentRaw, pipeline );
 
             // Cast the string to MarkupString so Blazor parses the HTML elements
-            yield return new Entry( id, weight, (MarkupString)titleHtml, (MarkupString)contentHtml );
+            yield return new Entry(
+                id,
+                weight,
+                (MarkupString)titleHtml,
+                (MarkupString)contentHtml
+            );
         }
     }
 
