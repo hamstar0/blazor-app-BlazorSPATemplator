@@ -2,16 +2,6 @@ namespace BlazorSPATemplator.Services;
 
 
 public class MarkdownFileSource {
-    public class Entry( string id, string titleMarkdown, string contentMarkdown ) {
-        public string Id { get; } = id;
-
-        public string Title { get; } = titleMarkdown;
-
-        public string Content { get; } = contentMarkdown;
-    }
-
-
-
 //     public static IReadOnlyList<MarkdownFileSource.Entry> Entries { get; } = new[] {
 //         new MarkdownFileSource.Entry(
 //             "home",
@@ -45,7 +35,7 @@ public class MarkdownFileSource {
         this._BaseDir = Path.Combine( env.ContentRootPath, "Content", "Markdown" );
     }
 
-    public IEnumerable<Entry> GetFileData() {
+    public IEnumerable<string> GetFileData() {
         // Define the path to your server-side markdown file
         // string filePath = Path.Combine( this.Env.WebRootPath, this.MarkdownFile );   //ex. "content.md"
         //
@@ -58,8 +48,8 @@ public class MarkdownFileSource {
         // }
 
         return Directory
-            .EnumerateFiles( this._BaseDir, "*.md" )
-            .Select( p => new Entry(Path.GetFileName(p), Path.GetFileName(p), File.ReadAllText(p)) );
+            .EnumerateFiles( this._BaseDir, "*.content.md" )
+            .Select( p => File.ReadAllText(p) );
     }
 }
 

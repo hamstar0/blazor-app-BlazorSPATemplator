@@ -5,8 +5,10 @@ namespace BlazorSPATemplator.Services;
 
 
 public class MarkdownMarkupSupplier {
-    public class Entry( string id, MarkupString title, MarkupString content ) {
+    public class Entry( string id, long sortWeight, MarkupString title, MarkupString content ) {
         public string Id { get; } = id;
+
+        public long SortWeight { get; } = sortWeight;
 
         public MarkupString Title { get; } = title;
         
@@ -20,24 +22,37 @@ public class MarkdownMarkupSupplier {
 
 
     public MarkdownMarkupSupplier( MarkdownFileSource fileSource ) {
-        IEnumerable<MarkdownFileSource.Entry> fileData = fileSource.GetFileData();
+        IEnumerable<string> fileData = fileSource.GetFileData();
 
-        this._ProcessedContentEntries = this.ProcessContentEntries( fileData );
+        this._ProcessedContentEntries = this.ProcessContentEntries( fileData )
+            .OrderBy( e => e.SortWeight )
+            .OrderBy( e => e.Title.ToString() );
     }
 
-    private IEnumerable<Entry> ProcessContentEntries( IEnumerable<MarkdownFileSource.Entry> markdownEntries ) {
+    private IEnumerable<Entry> ProcessContentEntries( IEnumerable<string> markdownEntries ) {
         // Configure Markdig pipeline for advanced features like tables, auto-links, etc.
         MarkdownPipeline pipeline = new MarkdownPipelineBuilder()
             .UseAdvancedExtensions()
             .Build();
 
-        foreach( MarkdownFileSource.Entry entry in markdownEntries ) {
+        foreach( string content in markdownEntries ) {
+            string[] lines = content.Split( '\n' );
+
+            // Line 1: Hash id (sans hash)
+            string id = lines[0].Trim();
+            // Line 2: Sort weight
+            long weight = int.Parse( lines[1].Trim() );
+            // Line 3: Title
+            string titleRaw = lines[2];
+            // Lines: Content
+            string contentRaw = string.Join( '\n', lines.TakeLast(lines.Length - 3) );
+
             // Convert raw markdown text to raw HTML text
-            string titleHtml = Markdown.ToHtml( entry.Title, pipeline );
-            string contentHtml = Markdown.ToHtml( entry.Content, pipeline );
+            string titleHtml = Markdown.ToHtml( titleRaw, pipeline );
+            string contentHtml = Markdown.ToHtml( contentRaw, pipeline );
 
             // Cast the string to MarkupString so Blazor parses the HTML elements
-            yield return new Entry( entry.Id, (MarkupString)titleHtml, (MarkupString)contentHtml );
+            yield return new Entry( id, weight, (MarkupString)titleHtml, (MarkupString)contentHtml );
         }
     }
 
